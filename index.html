@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle - Impressões & Cópias</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #fd7e14;
+            --info: #17a2b8;
+            --whatsapp: #25D366;
+            --gmail: #D44638;
+            --calculator: #5F9EA0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #333;
+            min-height: 100vh;
+            padding: 10px;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .logo img {
+            max-width: 400px;
+            height: auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px 15px;
+            background: white;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--dark);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .btn h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .btn p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(106,17,203,0.1), rgba(37,117,252,0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn:hover::after {
+            opacity: 1;
+        }
+
+        /* Estilos para Drag-and-Drop */
+        .btn.dragging {
+            opacity: 0.5;
+            border: 2px dashed #333;
+        }
+
+        .btn.drag-over {
+            border: 2px solid var(--primary);
+        }
+
+        /* Botões Flutuantes */
+        .float-btn {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .float-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .float-btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Botão Admin */
+        .admin-float-btn {
+            bottom: 30px;
+            right: 30px;
+        }
+
+        .admin-float-btn i {
+            color: var(--primary);
+        }
+
+        /* Botão WhatsApp */
+        .whatsapp-float-btn {
+            bottom: 180px;
+            left: 30px;
+        }
+
+        .whatsapp-float-btn i {
+            color: var(--whatsapp);
+        }
+
+        /* Botão Gmail */
+        .gmail-float-btn {
+            bottom: 110px;
+            left: 30px;
+        }
+
+        .gmail-float-btn i {
+            color: var(--gmail);
+        }
+
+        /* Botão Calculadora */
+        .calculator-float-btn {
+            bottom: 250px;
+            left: 30px;
+        }
+
+        .calculator-float-btn i {
+            color: var(--calculator);
+        }
+
+        /* Modal de Senha e Admin */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .admin-modal-content {
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .modal-btn-secondary {
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+        }
+
+        .modal-btn-secondary:hover {
+            background: var(--secondary);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .admin-panel h2 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .buttons-list {
+            margin-top: 30px;
+        }
+
+        .buttons-list h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .button-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .button-item span {
+            font-weight: 500;
+        }
+
+        .button-actions button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .edit-btn {
+            background: var(--info);
+            color: white;
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .float-btn {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .whatsapp-float-btn,
+            .gmail-float-btn,
+            .calculator-float-btn {
+                left: 15px;
+            }
+            
+            .whatsapp-float-btn {
+                bottom: 160px;
+            }
+            
+            .gmail-float-btn {
+                bottom: 100px;
+            }
+            
+            .calculator-float-btn {
+                bottom: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="logohorizontal.png" alt="Impressões & Cópias">
+        </div>
+
+        <header>
+            <h1>Painel de Controle</h1>
+            <p>Acesse todos os sistemas em um único lugar</p>
+        </header>
+
+        <div class="dashboard" id="dashboard">
+            <!-- Botões serão carregados via JavaScript -->
+        </div>
+    </div>
+    
+    <div class="custom-footer">
+        <p>© 2025 Castello Criativo. Todos os direitos e criação reservados.</p>
+    </div>
+
+    <style>
+    .custom-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.05);
+        text-align: center;
+        padding: 10px 0;
+        font-family: Arial, sans-serif;
+        font-size: 0.8rem;
+        color: #F0F8FF;
+        z-index: 1000;
+    }
+
+    .custom-footer p {
+        margin: 0;
+    }
+    </style>
+
+    <!-- Botões Flutuantes -->
+    <div class="float-btn calculator-float-btn" id="calculatorFloatBtn" title="Calculadora">
+        <i class="fas fa-calculator"></i>
+    </div>
+    
+    <div class="float-btn whatsapp-float-btn" id="whatsappFloatBtn" title="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+    
+    <div class="float-btn gmail-float-btn" id="gmailFloatBtn" title="Gmail">
+        <i class="fas fa-envelope"></i>
+    </div>
+    
+    <!-- Botão Flutuante Admin -->
+    <div class="float-btn admin-float-btn" id="adminFloatBtn" title="Administração">
+        <i class="fas fa-cog"></i>
+    </div>
+
+    <!-- Modal de Senha -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-lock"></i> Acesso Administrativo</h2>
+            <input type="password" id="adminPassword" placeholder="Digite a senha">
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" id="confirmPassword">Confirmar</button>
+                <button class="modal-btn modal-btn-secondary" id="cancelPassword">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal do Painel de Administração -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content admin-modal-content">
+            <div class="admin-panel" id="adminPanel">
+                <h2><i class="fas fa-cog"></i> Painel de Administração</h2>
+                <button class="modal-btn modal-btn-secondary" id="closeAdminModal" style="position: absolute; top: 10px; right: 10px;">Fechar e Salvar</button>
+                
+                <form id="addButtonForm">
+                    <div class="form-group">
+                        <label for="buttonName">Nome do Botão</label>
+                        <input type="text" id="buttonName" class="form-control" placeholder="Ex: Sistema de Pedidos" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="buttonDescription">Descrição</label>
+                        <input type="text" id="buttonDescription" class="form-control" placeholder="Ex: Gerencie pedidos de clientes">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="buttonIcon">Ícone (Font Awesome)</label>
+                        <input type="text" id="buttonIcon" class="form-control" placeholder="Ex: fas fa-shopping-cart ou cole o código completo">
+                        <small>Consulte os ícones em <a href="https://fontawesome.com/icons" target="_blank">Font Awesome</a></small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="buttonLink">Link</label>
+                        <input type="url" id="buttonLink" class="form-control" placeholder="Ex: https://seusite.com/sistema" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-submit" id="addButtonSubmit">Adicionar Botão</button>
+                        <button type="button" class="btn-submit" id="saveButtonSubmit" style="display: none;">Salvar Alterações</button>
+                        <button type="button" class="btn-cancel" id="cancelEditButton" style="display: none;">Cancelar</button>
+                    </div>
+                </form>
+                
+                <div class="buttons-list">
+                    <h3>Botões Cadastrados</h3>
+                    <div id="buttonsContainer">
+                        <!-- Os botões serão listados aqui via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variável global para rastrear o índice do botão sendo editado
+        let editingIndex = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Carrega os botões do localStorage
+            loadButtons();
+
+            const addButtonSubmit = document.getElementById('addButtonSubmit');
+            const saveButtonSubmit = document.getElementById('saveButtonSubmit');
+            const cancelEditButton = document.getElementById('cancelEditButton');
+            const addButtonForm = document.getElementById('addButtonForm');
+
+            // Configura os botões flutuantes
+            document.getElementById('whatsappFloatBtn').addEventListener('click', function() {
+                window.open('https://web.whatsapp.com/', '_blank');
+            });
+            
+            document.getElementById('gmailFloatBtn').addEventListener('click', function() {
+                window.open('https://mail.google.com/', '_blank');
+            });
+            
+            document.getElementById('calculatorFloatBtn').addEventListener('click', function() {
+                // Tentativa de abrir a calculadora do sistema (não funciona na web, apenas em contextos específicos)
+                try {
+                    // Isso não funcionará em navegadores comuns por questões de segurança
+                    window.open('calculator://', '_blank');
+                } catch (e) {
+                    // Fallback: abrir uma calculadora online
+                    window.open('https://www.google.com/search?q=calculator', '_blank');
+                    alert('Não foi possível abrir a calculadora do sistema. Abrindo uma calculadora online como alternativa.');
+                }
+            });
+
+            // Função para extrair classes do código do Font Awesome
+            function extractIconClasses(iconInput) {
+                try {
+                    const trimmedInput = iconInput ? iconInput.trim() : '';
+                    if (!trimmedInput) {
+                        return 'fas fa-question'; // Ícone padrão se o input estiver vazio
+                    }
+                    const htmlRegex = /<i\s+class=["'](.*?)["']>/;
+                    const match = trimmedInput.match(htmlRegex);
+                    
+                    if (match && match[1]) {
+                        return match[1].trim();
+                    }
+                    return trimmedInput.trim();
+                } catch (error) {
+                    console.error('Erro ao extrair classes do ícone:', error);
+                    return 'fas fa-question';
+                }
+            }
+
+            // Função para atualizar a visibilidade dos botões do formulário
+            function updateFormButtons() {
+                if (editingIndex !== null) {
+                    addButtonSubmit.style.display = 'none';
+                    saveButtonSubmit.style.display = 'inline-block';
+                    cancelEditButton.style.display = 'inline-block';
+                } else {
+                    addButtonSubmit.style.display = 'inline-block';
+                    saveButtonSubmit.style.display = 'none';
+                    cancelEditButton.style.display = 'none';
+                }
+            }
+
+            // Função para salvar ou adicionar botão
+            function saveButtonData() {
+                const buttonName = document.getElementById('buttonName').value;
+                const buttonDescription = document.getElementById('buttonDescription').value;
+                const buttonIconInput = document.getElementById('buttonIcon').value;
+                const buttonLink = document.getElementById('buttonLink').value;
+
+                // Valida os campos obrigatórios
+                if (!buttonName || !buttonLink) {
+                    alert('Por favor, preencha todos os campos obrigatórios (Nome e Link).');
+                    return;
+                }
+
+                const buttonIcon = extractIconClasses(buttonIconInput);
+                
+                let buttons = [];
+                try {
+                    const storedButtons = localStorage.getItem('dashboardButtons');
+                    buttons = storedButtons ? JSON.parse(storedButtons) : [];
+                    if (!Array.isArray(buttons)) {
+                        console.warn('Dados do localStorage não são um array. Recarregando botões padrão.');
+                        buttons = [];
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar botões do localStorage:', error);
+                    buttons = [];
+                }
+
+                if (editingIndex !== null && editingIndex >= 0 && editingIndex < buttons.length) {
+                    // Editar botão existente
+                    console.log('Editando botão no índice:', editingIndex);
+                    buttons[editingIndex] = {
+                        name: buttonName,
+                        description: buttonDescription || '',
+                        icon: buttonIcon,
+                        link: buttonLink
+                    };
+                    console.log('Botão editado:', buttons[editingIndex]);
+                } else {
+                    // Adicionar novo botão
+                    console.log('Adicionando novo botão');
+                    buttons.push({
+                        name: buttonName,
+                        description: buttonDescription || '',
+                        icon: buttonIcon,
+                        link: buttonLink
+                    });
+                }
+
+                // Salva no localStorage
+                try {
+                    localStorage.setItem('dashboardButtons', JSON.stringify(buttons));
+                    console.log('Botões salvos no localStorage:', buttons);
+                } catch (error) {
+                    console.error('Erro ao salvar botões no localStorage:', error);
+                }
+
+                // Recarrega os botões
+                loadButtons();
+
+                // Limpa o formulário e reseta o modo de edição
+                addButtonForm.reset();
+                editingIndex = null;
+                updateFormButtons();
+            }
+
+            // Botão para adicionar novo botão
+            addButtonSubmit.addEventListener('click', function(e) {
+                e.preventDefault();
+                saveButtonData();
+            });
+
+            // Botão para salvar alterações
+            saveButtonSubmit.addEventListener('click', function(e) {
+                e.preventDefault();
+                saveButtonData();
+            });
+
+            // Botão para cancelar edição
+            cancelEditButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                addButtonForm.reset();
+                editingIndex = null;
+                updateFormButtons();
+            });
+
+            // Botão flutuante admin
+            document.getElementById('adminFloatBtn').addEventListener('click', function() {
+                document.getElementById('passwordModal').style.display = 'flex';
+            });
+
+            // Confirmar senha (clique)
+            document.getElementById('confirmPassword').addEventListener('click', function() {
+                const password = document.getElementById('adminPassword').value;
+                if (password === 'admin123') {
+                    document.getElementById('passwordModal').style.display = 'none';
+                    document.getElementById('adminModal').style.display = 'flex';
+                    updateFormButtons();
+                } else {
+                    alert('Senha incorreta!');
+                }
+            });
+
+            // Confirmar senha (Enter)
+            document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const password = this.value;
+                    if (password === 'admin123') {
+                        document.getElementById('passwordModal').style.display = 'none';
+                        document.getElementById('adminModal').style.display = 'flex';
+                        updateFormButtons();
+                    } else {
+                        alert('Senha incorreta!');
+                    }
+                }
+            });
+
+            // Cancelar
+            document.getElementById('cancelPassword').addEventListener('click', function() {
+                document.getElementById('passwordModal').style.display = 'none';
+            });
+
+            // Fechar o modal do painel de administração
+            document.getElementById('closeAdminModal').addEventListener('click', function() {
+                document.getElementById('adminModal').style.display = 'none';
+                editingIndex = null; // Reseta o índice ao fechar
+                addButtonForm.reset(); // Limpa o formulário
+                updateFormButtons();
+            });
+        });
+
+        function loadButtons() {
+            const buttonsContainer = document.getElementById('buttonsContainer');
+            const dashboard = document.getElementById('dashboard');
+
+            if (!buttonsContainer || !dashboard) {
+                console.error('Elementos buttonsContainer ou dashboard não encontrados no DOM.');
+                return;
+            }
+
+            buttonsContainer.innerHTML = '';
+            dashboard.innerHTML = '';
+
+            let buttons = [];
+            try {
+                const storedButtons = localStorage.getItem('dashboardButtons');
+                if (storedButtons) {
+                    buttons = JSON.parse(storedButtons);
+                    if (!Array.isArray(buttons)) {
+                        console.warn('Dados do localStorage não são um array. Recarregando botões padrão.');
+                        buttons = [];
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar botões do localStorage:', error);
+                buttons = [];
+            }
+
+            if (buttons.length === 0) {
+                console.log('Nenhum botão encontrado no localStorage. Carregando botões padrão.');
+                buttons = [
+                    {
+                        name: 'Adesivos e Lonas',
+                        description: 'Criação e gerenciamento de adesivos e lonas',
+                        icon: 'fas fa-sticky-note',
+                        link: 'https://castellocriativo.github.io/Adesivoselonas/'
+                    },
+                    {
+                        name: 'Impressões',
+                        description: 'Sistema de gerenciamento de impressões',
+                        icon: 'fas fa-print',
+                        link: 'https://castellocriativo.github.io/impressoes/'
+                    },
+                    {
+                        name: 'Orçamentos',
+                        description: 'Criação e acompanhamento de orçamentos',
+                        icon: 'fas fa-calculator',
+                        link: 'https://castellocriativo.github.io/orcamentos/'
+                    },
+ {
+                        name: 'Acesso Rápido',
+                        description: 'Acesse links de páginas mais acessadas',
+                        icon: 'fa-solid fa-paper-plane',
+                        link: 'acesso rápido.html'
+                    },
+
+                    {
+                        name: 'Medidor de Espaço',
+                        description: 'Ferramenta para medição de espaços',
+                        icon: 'fas fa-ruler-combined',
+                        link: 'https://castellocriativo.github.io/medidor/'
+                    },
+                    {
+                        name: 'Gerador QR Code',
+                        description: 'Crie QR Codes e códigos de barras',
+                        icon: 'fas fa-qrcode',
+                        link: 'https://castellocriativo.github.io/qrcode/'
+                    },
+                    {
+                        name: 'Mensagens Automáticas',
+                        description: 'Configure mensagens automáticas',
+                        icon: 'fas fa-comment-dots',
+                        link: 'https://castellocriativo.github.io/mensagens/'
+                    },
+                    {
+                        name: 'Temporizador',
+                        description: 'Controle de tempo para tarefas',
+                        icon: 'fas fa-clock',
+                        link: 'https://castellocriativo.github.io/temporizador/'
+                    }
+                ];
+                localStorage.setItem('dashboardButtons', JSON.stringify(buttons));
+            }
+
+            buttons.forEach((button, index) => {
+                if (!button.name || !button.icon || !button.link) {
+                    console.warn('Botão inválido encontrado no índice', index, ':', button);
+                    return;
+                }
+                const buttonItem = document.createElement('div');
+                buttonItem.className = 'button-item';
+                buttonItem.innerHTML = `
+                    <span>${button.name}</span>
+                    <div class="button-actions">
+                        <button class="edit-btn" onclick="editButton(${index})">Editar</button>
+                        <button class="delete-btn" onclick="deleteButton(${index})">Excluir</button>
+                    </div>
+                `;
+                buttonsContainer.appendChild(buttonItem);
+            });
+
+            updateDashboard(buttons);
+        }
+
+        function editButton(index) {
+            const buttons = JSON.parse(localStorage.getItem('dashboardButtons'));
+            if (!buttons || !buttons[index]) {
+                console.error('Botão não encontrado para edição no índice:', index);
+                return;
+            }
+            const button = buttons[index];
+
+            document.getElementById('buttonName').value = button.name;
+            document.getElementById('buttonDescription').value = button.description || '';
+            document.getElementById('buttonIcon').value = button.icon;
+            document.getElementById('buttonLink').value = button.link;
+
+            editingIndex = index;
+            console.log('Índice de edição definido:', editingIndex);
+            updateFormButtons();
+        }
+
+        function deleteButton(index) {
+            const buttons = JSON.parse(localStorage.getItem('dashboardButtons'));
+            if (!buttons || !buttons[index]) {
+                console.error('Botão não encontrado para exclusão no índice:', index);
+                return;
+            }
+            const buttonName = buttons[index].name;
+            const confirmDelete = window.confirm(`Deseja realmente excluir o botão "${buttonName}"?`);
+            if (confirmDelete) {
+                buttons.splice(index, 1);
+                localStorage.setItem('dashboardButtons', JSON.stringify(buttons));
+                loadButtons();
+            }
+        }
+
+        function updateDashboard(buttons) {
+            const dashboard = document.getElementById('dashboard');
+            if (!dashboard) {
+                console.error('Elemento dashboard não encontrado no DOM.');
+                return;
+            }
+            dashboard.innerHTML = '';
+
+            buttons.forEach((button, index) => {
+                if (!button.name || !button.icon || !button.link) {
+                    console.warn('Botão inválido encontrado no índice', index, ':', button);
+                    return;
+                }
+                const btnElement = document.createElement('a');
+                btnElement.className = 'btn';
+                btnElement.href = button.link;
+                btnElement.target = '_blank';
+                btnElement.draggable = true;
+                btnElement.dataset.index = index;
+                btnElement.innerHTML = `
+                    <i class="${button.icon}"></i>
+                    <h3>${button.name}</h3>
+                    <p>${button.description || ''}</p>
+                `;
+                btnElement.addEventListener('dragstart', handleDragStart);
+                btnElement.addEventListener('dragover', handleDragOver);
+                btnElement.addEventListener('drop', handleDrop);
+                btnElement.addEventListener('dragend', handleDragEnd);
+                dashboard.appendChild(btnElement);
+            });
+        }
+
+        let draggedIndex = null;
+
+        function handleDragStart(e) {
+            draggedIndex = parseInt(e.target.dataset.index);
+            e.target.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', draggedIndex);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.target.classList.add('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropIndex = parseInt(e.target.closest('.btn').dataset.index);
+            if (draggedIndex !== dropIndex) {
+                const buttons = JSON.parse(localStorage.getItem('dashboardButtons')) || [];
+                const [draggedButton] = buttons.splice(draggedIndex, 1);
+                buttons.splice(dropIndex, 0, draggedButton);
+                localStorage.setItem('dashboardButtons', JSON.stringify(buttons));
+                loadButtons();
+            }
+            e.target.classList.remove('drag-over');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function updateFormButtons() {
+            const addButtonSubmit = document.getElementById('addButtonSubmit');
+            const saveButtonSubmit = document.getElementById('saveButtonSubmit');
+            const cancelEditButton = document.getElementById('cancelEditButton');
+
+            if (editingIndex !== null) {
+                addButtonSubmit.style.display = 'none';
+                saveButtonSubmit.style.display = 'inline-block';
+                cancelEditButton.style.display = 'inline-block';
+            } else {
+                addButtonSubmit.style.display = 'inline-block';
+                saveButtonSubmit.style.display = 'none';
+                cancelEditButton.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
