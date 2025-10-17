@@ -518,7 +518,7 @@
     </style>
 
     <!-- Botões Flutuantes -->
-    <div class="float-btn calculator-float-btn" id="calculatorFloatBtn" title="Calculadora">
+    <div class="float-btn calculator-float-btn" id="calculatorFloatBtn" title="PDV">
         <i class="fas fa-calculator"></i>
     </div>
     
@@ -626,15 +626,9 @@
             });
             
             document.getElementById('calculatorFloatBtn').addEventListener('click', function() {
-                // Tentativa de abrir a calculadora do sistema (não funciona na web, apenas em contextos específicos)
-                try {
-                    // Isso não funcionará em navegadores comuns por questões de segurança
-                    window.open('calculator://', '_blank');
-                } catch (e) {
-                    // Fallback: abrir uma calculadora online
-                    window.open('https://www.google.com/search?q=calculator', '_blank');
-                    alert('Não foi possível abrir a calculadora do sistema. Abrindo uma calculadora online como alternativa.');
-                }
+                // Abrir PDV
+                window.open('https://castellocriativo.marketup.com/muppos/#/iniciar_venda', '_blank');
+               
             });
             
             // Novo botão flutuante para Pedidos
