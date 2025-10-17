@@ -20,6 +20,8 @@
             --whatsapp: #25D366;
             --gmail: #D44638;
             --calculator: #5F9EA0;
+            --pedidos: #FF6B6B;
+            --agenda: #4ECDC4;
         }
         
         * {
@@ -178,7 +180,7 @@
 
         /* Botão WhatsApp */
         .whatsapp-float-btn {
-            bottom: 180px;
+            bottom: 250px;
             left: 30px;
         }
 
@@ -198,12 +200,32 @@
 
         /* Botão Calculadora */
         .calculator-float-btn {
-            bottom: 250px;
+            bottom: 320px;
             left: 30px;
         }
 
         .calculator-float-btn i {
             color: var(--calculator);
+        }
+
+        /* Botão Pedidos */
+        .pedidos-float-btn {
+            bottom: 40px;
+            left: 30px;
+        }
+
+        .pedidos-float-btn i {
+            color: var(--pedidos);
+        }
+
+        /* Botão Agenda */
+        .agenda-float-btn {
+            bottom: 180px;
+            left: 30px;
+        }
+
+        .agenda-float-btn i {
+            color: var(--agenda);
         }
 
         /* Modal de Senha e Admin */
@@ -293,6 +315,7 @@
             border-radius: 10px;
             padding: 25px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
         .admin-panel h2 {
@@ -425,12 +448,14 @@
             
             .whatsapp-float-btn,
             .gmail-float-btn,
-            .calculator-float-btn {
+            .calculator-float-btn,
+            .pedidos-float-btn,
+            .agenda-float-btn {
                 left: 15px;
             }
             
             .whatsapp-float-btn {
-                bottom: 160px;
+                bottom: 220px;
             }
             
             .gmail-float-btn {
@@ -438,7 +463,16 @@
             }
             
             .calculator-float-btn {
-                bottom: 220px;
+                bottom: 280px;
+            }
+            
+            .pedidos-float-btn {
+                bottom: 40px;
+            }
+            
+            .agenda-float-btn {
+                bottom: 160px;
+                left: 80px;
             }
         }
     </style>
@@ -494,6 +528,16 @@
     
     <div class="float-btn gmail-float-btn" id="gmailFloatBtn" title="Gmail">
         <i class="fas fa-envelope"></i>
+    </div>
+    
+    <!-- Novo botão flutuante para Pedidos -->
+    <div class="float-btn pedidos-float-btn" id="pedidosFloatBtn" title="Sistema de Pedidos">
+        <i class="fas fa-shopping-cart"></i>
+    </div>
+    
+    <!-- Novo botão flutuante para Agenda -->
+    <div class="float-btn agenda-float-btn" id="agendaFloatBtn" title="Agenda Google">
+        <i class="fas fa-calendar-alt"></i>
     </div>
     
     <!-- Botão Flutuante Admin -->
@@ -591,6 +635,16 @@
                     window.open('https://www.google.com/search?q=calculator', '_blank');
                     alert('Não foi possível abrir a calculadora do sistema. Abrindo uma calculadora online como alternativa.');
                 }
+            });
+            
+            // Novo botão flutuante para Pedidos
+            document.getElementById('pedidosFloatBtn').addEventListener('click', function() {
+                window.open('https://castellocriativo.marketup.com/index.html#/home', '_blank');
+            });
+            
+            // Novo botão flutuante para Agenda
+            document.getElementById('agendaFloatBtn').addEventListener('click', function() {
+                window.open('https://calendar.google.com/calendar/u/1/r/week?pli=1', '_blank');
             });
 
             // Função para extrair classes do código do Font Awesome
@@ -791,7 +845,7 @@
                         name: 'Adesivos e Lonas',
                         description: 'Criação e gerenciamento de adesivos e lonas',
                         icon: 'fas fa-sticky-note',
-                        link: 'https://castellocriativo.github.io/Adesivoselonas/'
+                        link: 'https://castellocriativo.github.io/adesivoselonas/'
                     },
                     {
                         name: 'Impressões',
@@ -805,13 +859,12 @@
                         icon: 'fas fa-calculator',
                         link: 'https://castellocriativo.github.io/orcamentos/'
                     },
- {
+                    {
                         name: 'Acesso Rápido',
                         description: 'Acesse links de páginas mais acessadas',
                         icon: 'fa-solid fa-paper-plane',
                         link: 'acesso rápido.html'
                     },
-
                     {
                         name: 'Medidor de Espaço',
                         description: 'Ferramenta para medição de espaços',
